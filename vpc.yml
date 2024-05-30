@@ -1,9 +1,55 @@
 ---
 - name: AWS Infra
   hosts: localhost
+  vars:
+    region: ap-south-1 # Update region as required.
+    state: present  #present=CreateSubnets, absent=DeleteSubnets
   tasks:
     - name: Creating AWS VPC
       amazon.aws.ec2_vpc_net:
         name: ansible-vpc
-        region: ap-south-1
+        region: "{{ region }}"
         cidr_block: 10.10.0.0/16
+      register: vpc
+
+    - name: Print VPC Details
+      debug:
+        msg: vpc.id
+
+    - name: Create Private Sub-Net-1
+      amazon.aws.ec2_vpc_subnet:
+        region: "{{ region }}"
+        state: "{{ state }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.10.1.0/24
+        tags:
+          Name: private_subnet_1
+
+    - name: Create Private Sub-Net-2
+      amazon.aws.ec2_vpc_subnet:
+        region: "{{ region }}"
+        state: "{{ state }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.10.2.0/24
+        tags:
+          Name: private_subnet_2
+
+    - name: Create Public Sub-Net-1
+      amazon.aws.ec2_vpc_subnet:
+        region: "{{ region }}"
+        state: "{{ state }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.10.3.0/24
+        tags:
+          Name: public_subnet_1
+
+    - name: Create Public Sub-Net-2
+      amazon.aws.ec2_vpc_subnet:
+        region: "{{ region }}"
+        state: "{{ state }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.10.4.0/24
+        tags:
+          Name: public_subnet_2
+
+
