@@ -1,0 +1,9 @@
+---
+- name: AWS Infra
+  hosts: localhost
+  tasks:
+    - name: Creating AWS VPC
+      amazon.aws.ec2_vpc_net:
+        name: ansible-vpc
+        region: ap-south-1
+        cidr_block: 10.10.0.0/16
